@@ -69,3 +69,5 @@ COPY --from=kotlin-plugin ./protoc-gen-kotlin/lib /usr/local/lib/
 COPY --from=go-plugin /usr/local/bin/protoc-gen-go /usr/local/bin/
 COPY --from=scala-plugin /usr/local/bin/protoc-gen-scala /usr/local/bin/
 COPY --from=pseudomuto/protoc-gen-doc /usr/local/bin/protoc-gen-doc /usr/local/bin/
+
+ENTRYPOINT ["prototool"]
