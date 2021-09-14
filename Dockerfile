@@ -49,6 +49,15 @@ RUN apk add --update --no-cache \
     nodejs-npm \
     && rm -rf /var/cache/apk/*
 
+ENV PROTOBUF_VERSION "3.17.3"
+RUN mkdir -p /tmp/protoc && \
+  curl -sSL \
+  https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOBUF_VERSION/protoc-$PROTOBUF_VERSION-linux-x86_64.zip \
+  -o /tmp/protoc/protoc.zip && \
+  cd /tmp/protoc && \
+  unzip protoc.zip && \
+  mv /tmp/protoc/include /usr/local/include
+
 COPY --from=swift-builder /usr/local/bin/protoc-gen-swift /usr/local/bin/protoc-gen-swift
 COPY --from=swift-builder /usr/local/bin/protoc-gen-grpc-swift /usr/local/bin/protoc-gen-grpc-swift
 COPY --from=swift-builder /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
@@ -90,5 +99,9 @@ COPY --from=pseudomuto/protoc-gen-doc /usr/local/bin/protoc-gen-doc /usr/local/b
 # TypeScript
 RUN npm i -g yarn
 RUN yarn global add grpc-tools grpc_tools_node_protoc_ts
+
+# unset static protoc
+ENV PROTOTOOL_PROTOC_BIN_PATH=
+ENV PROTOTOOL_PROTOC_WKT_PATH=
 
 ENTRYPOINT ["prototool"]
